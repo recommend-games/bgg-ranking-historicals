@@ -19,32 +19,34 @@ def remove_short_files(
 ) -> int:
     """Remove files shorter than the previous file in a directory."""
 
+    assert 0 <= tolerance <= 1, "Tolerance must be in the range [0, 1]"
+
     in_dir = Path(in_dir).resolve()
     LOGGER.info("Removing files shorter than the previous file in <%s>…", in_dir)
 
-    prev = 0
-    removed = 0
+    prev_count = 0
+    removed_short = 0
 
     paths = in_dir.glob(glob) if glob else in_dir.iterdir()
 
     for path in sorted(paths):
         with path.open("r") as file:
-            curr = sum(1 for _ in file)
-        if curr < prev * tolerance:
+            curr_count = sum(1 for _ in file)
+        if curr_count < prev_count * tolerance:
             LOGGER.info(
                 "File <%s> is shorter (%d lines) than the previous file (%d lines), removing…",
                 path.name,
-                curr,
-                prev,
+                curr_count,
+                prev_count,
             )
             if dry_run:
                 print(path)
             else:
                 path.unlink()
-            removed += 1
-        prev = max(prev, curr)
+            removed_short += 1
+        prev_count = max(prev_count, curr_count)
 
-    return removed
+    return removed_short
 
 
 def _arg_parse():
