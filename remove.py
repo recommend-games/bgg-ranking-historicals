@@ -13,7 +13,7 @@ LOGGER = logging.getLogger(__name__)
 def remove_short_files(
     *,
     in_dir: str | Path,
-    glob: str = "*.csv",
+    glob: str | None = None,
     tolerance: float = 1.0,
     dry_run: bool = False,
 ) -> int:
@@ -25,7 +25,9 @@ def remove_short_files(
     prev = 0
     removed = 0
 
-    for path in sorted(in_dir.glob(glob)):
+    paths = in_dir.glob(glob) if glob else in_dir.iterdir()
+
+    for path in sorted(paths):
         with path.open("r") as file:
             curr = sum(1 for _ in file)
         if curr < prev * tolerance:
