@@ -1,4 +1,12 @@
-#!/usr/bin/env python
+#!/usr/bin/env -S uv run --script
+
+# /// script
+# requires-python = ">=3.14"
+# dependencies = [
+#     "gitpython",
+#     "pytility[dates]",
+# ]
+# ///
 
 """Rename the files in a repo to match the earliest commit on Git."""
 
